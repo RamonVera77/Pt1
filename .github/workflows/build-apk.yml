@@ -1,0 +1,47 @@
+name: Power Training APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar proyecto
+        uses: actions/checkout@v4
+
+      - name: Preparar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Preparar Android
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar Android 35
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Preparar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Descomprimir Power Training
+        run: unzip -q PowerTraining_Android_Source.zip
+
+      - name: Compilar APK
+        working-directory: PowerTraining_Android
+        run: gradle :app:assembleDebug
+
+      - name: Preparar instalador
+        run: cp PowerTraining_Android/app/build/outputs/apk/debug/app-debug.apk PowerTraining.apk
+
+      - name: Subir APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: PowerTraining-APK
+          path: PowerTraining.apk
