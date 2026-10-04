@@ -19,11 +19,13 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Preparar Android
+        uses: android-actions/setup-android@v4
+        with:
+          packages: ''
+
       - name: Instalar Android 35
-        run: |
-          SDKMANAGER="/usr/local/lib/android/sdk/cmdline-tools/16.0/bin/sdkmanager"
-          yes | "$SDKMANAGER" --licenses > /dev/null || true
-          "$SDKMANAGER" "platforms;android-35" "build-tools;35.0.0"
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
       - name: Preparar Gradle
         uses: gradle/actions/setup-gradle@v4
